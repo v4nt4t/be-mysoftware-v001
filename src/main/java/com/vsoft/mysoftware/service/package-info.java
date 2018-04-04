@@ -1,4 +1,4 @@
 /**
  * Spring Framework configuration files.
  */
-package com.vsoft.mysoftware.domain;
+package com.vsoft.mysoftware.service;
