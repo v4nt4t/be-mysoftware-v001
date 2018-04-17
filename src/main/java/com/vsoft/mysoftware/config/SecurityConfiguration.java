@@ -7,10 +7,12 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,12 +20,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.zalando.problem.ProblemModule;
+import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
+import org.zalando.problem.validation.ConstraintViolationProblemModule;
 
 import com.vsoft.mysoftware.security.jwt.JWTConfigurer;
 import com.vsoft.mysoftware.security.jwt.TokenProvider;
-
-
-
 
 @Configuration
 @Import(SecurityProblemSupport.class)
@@ -63,15 +69,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         }
 	}
 	
-	
     @Override
     public void configure(HttpSecurity http) throws Exception {
     	http
 //    	 	.addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling()
-            .authenticationEntryPoint(securityProblemSupport)
-            .accessDeniedHandler(securityProblemSupport)
-        .and()
+//            .exceptionHandling()
+//            .authenticationEntryPoint(securityProblemSupport)
+//            .accessDeniedHandler(securityProblemSupport)
+//        .and()
     		.csrf()
     		.disable()
     		.headers()
@@ -84,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     		.authorizeRequests()
     		.antMatchers("/api/authenticate").permitAll()
     		.antMatchers("/api/mheadermenus").permitAll()
-    		.anyRequest().authenticated()
+    		.antMatchers("/api/**").permitAll()
     	.and()
     		.apply(securityConfigurerAdapter());
     		
@@ -100,27 +105,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
     
-//    @Override
+    @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
    
-/*    @Bean
-    public CorsFilter corsFilter() throws Exception {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
-            source.registerCorsConfiguration("/api/**", config);
-            config.addAllowedOrigin("*");
-        }
-        return new CorsFilter(source);
-    }*/
     
-    
-    @Bean
-    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
-        return new SecurityEvaluationContextExtension();
-    }
-
 }

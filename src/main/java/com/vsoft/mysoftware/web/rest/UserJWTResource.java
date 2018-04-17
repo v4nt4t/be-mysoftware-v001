@@ -39,17 +39,14 @@ public class UserJWTResource {
 	@PostMapping("/authenticate")
 	public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM){
 		
-//		LoginVM loginVM = new LoginVM();
-//		loginVM.setUsername("admin");
-//		loginVM.setPassword("admin");
-//		loginVM.setRememberMe(false);
-		
-		System.out.print("test");
+		//dapatkan authentication token
 		UsernamePasswordAuthenticationToken authenticationToken =
 	            new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
 		
+		//authentication
 		Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+		//set security holder
+		SecurityContextHolder.getContext().setAuthentication(authentication);
         boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
         
         String jwt = tokenProvider.buatToken(authentication, rememberMe);

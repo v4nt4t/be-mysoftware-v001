@@ -1,12 +1,12 @@
 package com.vsoft.mysoftware.domain;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -16,10 +16,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 @Entity
-@Table(name = "mheadermenu")
-public class Mheadermenu implements Serializable {
+@Table(name="mmenu")
+public class Mmenu implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "uuid")
@@ -28,24 +28,28 @@ public class Mheadermenu implements Serializable {
 	private String id;
 
 	@NotNull
-	@Size(min = 1, max = 5)
 	@NotEmpty
+	@Size(min = 1, max = 5)
 	@Column(name = "kode", length = 5, nullable = false)
 	private String kode;
 
 	@NotNull
-	@Size(min = 1, max = 50)
 	@NotEmpty
-	@Column(name = "headermenu", length = 50, nullable = false)
-	private String headermenu;
+	@Size(min = 1, max = 50)
+	@Column(name = "menu", length = 50, nullable = false)
+	private String menu;
 
 	@NotNull
 	@Column(name = "allowedf", nullable = false)
 	private boolean allowedf;
 
 	@NotNull
-	@Column(name = "urutan")
+	@Column(name = "urutan", nullable = false)
 	private Integer urutan;
+
+	@ManyToOne
+	@NotNull
+	private Mgroupmenu mgroupmenu;
 
 	public String getId() {
 		return id;
@@ -63,12 +67,12 @@ public class Mheadermenu implements Serializable {
 		this.kode = kode;
 	}
 
-	public String getHeadermenu() {
-		return headermenu;
+	public String getMenu() {
+		return menu;
 	}
 
-	public void setHeadermenu(String headermenu) {
-		this.headermenu = headermenu;
+	public void setMenu(String menu) {
+		this.menu = menu;
 	}
 
 	public boolean isAllowedf() {
@@ -86,33 +90,19 @@ public class Mheadermenu implements Serializable {
 	public void setUrutan(Integer urutan) {
 		this.urutan = urutan;
 	}
-	
-	 @Override
-	    public boolean equals(Object o) {
-	        if (this == o) {
-	            return true;
-	        }
-	        if (o == null || getClass() != o.getClass()) {
-	            return false;
-	        }
-	        Mheadermenu mheadermenu = (Mheadermenu) o;
-	        if(mheadermenu.id == null || id == null) {
-	            return false;
-	        }
-	        return Objects.equals(id, mheadermenu.id);
-	    }
 
-	    @Override
-	    public int hashCode() {
-	        return Objects.hashCode(id);
-	    }
-	
+	public Mgroupmenu getMgroupmenu() {
+		return mgroupmenu;
+	}
+
+	public void setMgroupmenu(Mgroupmenu mgroupmenu) {
+		this.mgroupmenu = mgroupmenu;
+	}
+
 	@Override
 	public String toString() {
-		return "mheadermenu [id=" + id + ", kode=" + kode + ", headermenu=" + headermenu + ", allowedf=" + allowedf
-				+ ", urutan=" + urutan + "]";
+		return "Mmenu [id=" + id + ", kode=" + kode + ", menu=" + menu + ", allowedf=" + allowedf + ", urutan=" + urutan
+				+ "]";
 	}
-    
-    
 
 }
