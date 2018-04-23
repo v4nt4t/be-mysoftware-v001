@@ -21,9 +21,16 @@ public final class PaginationUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", Long.toString(page.getTotalElements()));
         String link = "";
+        
+//        System.out.println(page.getNumber());
+//        System.out.println(page.getTotalPages());
+        
+        // jika page lebih kecil dari total page
         if ((page.getNumber() + 1) < page.getTotalPages()) {
             link = "<" + generateUri(baseUrl, page.getNumber() + 1, page.getSize()) + ">; rel=\"next\",";
         }
+        
+        // jika bukan page pertama
         // prev link
         if ((page.getNumber()) > 0) {
             link += "<" + generateUri(baseUrl, page.getNumber() - 1, page.getSize()) + ">; rel=\"prev\",";
@@ -35,6 +42,9 @@ public final class PaginationUtil {
         }
         link += "<" + generateUri(baseUrl, lastPage, page.getSize()) + ">; rel=\"last\",";
         link += "<" + generateUri(baseUrl, 0, page.getSize()) + ">; rel=\"first\"";
+        
+//        System.out.println(link);
+        
         headers.add(HttpHeaders.LINK, link);
         return headers;
     }
