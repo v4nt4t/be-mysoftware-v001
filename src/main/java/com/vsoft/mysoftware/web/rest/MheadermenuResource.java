@@ -97,21 +97,21 @@ public class MheadermenuResource {
         		.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
-    @GetMapping("/mheadermenus/like/kode/{kode}")
+    @GetMapping("/mheadermenus/kode/like/{kode}")
     public ResponseEntity<List<Mheadermenu>> getMheadermenusLikeKode(Pageable pageable, @PathVariable String kode) {
     	
     	kode = kode +"%";
         Page<Mheadermenu> page = mheadermenuRepository.findByKodeLike(pageable, kode);
-        HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mheadermenus/like/kode");
+        HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mheadermenus/kode/like");
         return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
     }
     
-    @GetMapping("/mheadermenus/like/uraian/{uraian}")
+    @GetMapping("/mheadermenus/uraian/like/{uraian}")
     public ResponseEntity<List<Mheadermenu>> getMheadermenusLikeUraian(Pageable pageable, @PathVariable String uraian) {
     	
     	uraian = uraian +"%";
         Page<Mheadermenu> page = mheadermenuRepository.findByHeadermenuLike(pageable, uraian);
-        HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mheadermenus/like/kode");
+        HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mheadermenus/uraian/like");
         return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
     }
 }

@@ -38,6 +38,12 @@ public class Mmenu implements Serializable {
 	@Size(min = 1, max = 50)
 	@Column(name = "menu", length = 50, nullable = false)
 	private String menu;
+	
+	@NotNull
+	@NotEmpty
+	@Size(min = 1, max = 50)
+	@Column(name = "objek", length = 50, nullable = false)
+	private String objek;
 
 	@NotNull
 	@Column(name = "allowedf", nullable = false)
@@ -75,6 +81,14 @@ public class Mmenu implements Serializable {
 		this.menu = menu;
 	}
 
+	public String getObjek() {
+		return objek;
+	}
+
+	public void setObjek(String objek) {
+		this.objek = objek;
+	}
+
 	public boolean isAllowedf() {
 		return allowedf;
 	}
@@ -101,8 +115,9 @@ public class Mmenu implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Mmenu [id=" + id + ", kode=" + kode + ", menu=" + menu + ", allowedf=" + allowedf + ", urutan=" + urutan
-				+ "]";
+		return "Mmenu [id=" + id + ", kode=" + kode + ", menu=" + menu + ", objek=" + objek + ", allowedf=" + allowedf
+				+ ", urutan=" + urutan + ", mgroupmenu=" + mgroupmenu + "]";
 	}
 
+	
 }
