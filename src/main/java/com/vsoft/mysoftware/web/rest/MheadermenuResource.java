@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vsoft.mysoftware.domain.Mheadermenu;
+import com.vsoft.mysoftware.domain.Mmenu;
 import com.vsoft.mysoftware.repository.MheadermenuRepository;
 import com.vsoft.mysoftware.web.rest.error.BadRequestAlertException;
 import com.vsoft.mysoftware.web.rest.util.HeaderUtil;
@@ -77,7 +78,8 @@ public class MheadermenuResource {
     public ResponseEntity<Void> deleteMheadermenu(@PathVariable String id){
     	
     	mheadermenuRepository.deleteById(id);
-    	return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();    	
+    	return ResponseEntity.ok()
+    			.headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();    	
     }
 	
     @GetMapping("/mheadermenus")
@@ -86,6 +88,12 @@ public class MheadermenuResource {
         HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mheadermenus");
         return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
     }
+    
+	@GetMapping("/mheadermenus/all")
+	public ResponseEntity<List<Mheadermenu>> getMheadermenu() {
+		List<Mheadermenu> result = this.mheadermenuRepository.findAll();
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
     
     @GetMapping("/mheadermenus/{id}")
     public ResponseEntity<Mheadermenu> getMheadermenus(@PathVariable String id) {

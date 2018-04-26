@@ -61,7 +61,7 @@ public class MgroupmenuResource {
 		}
 		
 		Mgroupmenu result = mgroupmenuRepository.save(mgroupmenu);
-		return ResponseEntity.created(new URI("/api/mgroupmenus/" + result.getId()))
+		return ResponseEntity.ok()
 				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
 	            .body(result);
 	}
