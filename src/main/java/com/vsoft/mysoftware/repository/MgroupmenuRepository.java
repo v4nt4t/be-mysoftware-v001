@@ -1,5 +1,9 @@
 package com.vsoft.mysoftware.repository;
 
+
+
+import java.util.Collection;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +16,13 @@ public interface MgroupmenuRepository extends JpaRepository<Mgroupmenu, String> 
 	
 	Page<Mgroupmenu> findByKodeLike(Pageable pageable, String kode);
 	Page<Mgroupmenu> findByGroupmenuLike(Pageable pageable, String uraian);
-
+	
+//	Dynamic projections
+//	<T> Page<T> findByKodeLike(Pageable pageable, String kode, Class<T> type);
+//	<T> Page<T> findByGroupmenuLike(Pageable pageable, String uraian, Class<T> type);
+	
+	<T> Collection<T> findAllProjectedBy(Class<T> type);
+	<T> Page<T> findPagedProjectedBy(Pageable pageable, Class<T> type);
+	
+	
 }

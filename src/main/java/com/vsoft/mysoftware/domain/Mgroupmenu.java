@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -13,6 +14,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "mgroupmenu")
@@ -46,10 +49,15 @@ public class Mgroupmenu implements Serializable {
 	@Column(name = "urutan")
 	private Integer urutan;
 
-	@ManyToOne
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch=FetchType.LAZY)
 	@NotNull
 	private Mheadermenu mheadermenu;
 
+	public Mgroupmenu(){
+		
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -74,7 +82,7 @@ public class Mgroupmenu implements Serializable {
 		this.groupmenu = groupmenu;
 	}
 
-	public boolean getAllowedf() {
+	public boolean isAllowedf() {
 		return allowedf;
 	}
 
@@ -89,6 +97,7 @@ public class Mgroupmenu implements Serializable {
 	public void setUrutan(Integer urutan) {
 		this.urutan = urutan;
 	}
+
 
 	public Mheadermenu getMheadermenu() {
 		return mheadermenu;

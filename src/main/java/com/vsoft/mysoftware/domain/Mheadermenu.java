@@ -87,25 +87,25 @@ public class Mheadermenu implements Serializable {
 		this.urutan = urutan;
 	}
 	
-	 @Override
-	    public boolean equals(Object o) {
-	        if (this == o) {
-	            return true;
-	        }
-	        if (o == null || getClass() != o.getClass()) {
-	            return false;
-	        }
-	        Mheadermenu mheadermenu = (Mheadermenu) o;
-	        if(mheadermenu.id == null || id == null) {
-	            return false;
-	        }
-	        return Objects.equals(id, mheadermenu.id);
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) {
+	        return true;
 	    }
-
-	    @Override
-	    public int hashCode() {
-	        return Objects.hashCode(id);
+	    if (o == null || getClass() != o.getClass()) {
+	        return false;
 	    }
+	    Mheadermenu mheadermenu = (Mheadermenu) o;
+	    if(mheadermenu.id == null || id == null) {
+	        return false;
+	    }
+	    return Objects.equals(id, mheadermenu.id);
+	}
+	
+	@Override
+	public int hashCode() {
+	    return Objects.hashCode(id);
+	}
 	
 	@Override
 	public String toString() {

@@ -2,6 +2,7 @@ package com.vsoft.mysoftware.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vsoft.mysoftware.domain.Mgroupmenu;
 import com.vsoft.mysoftware.repository.MgroupmenuRepository;
+import com.vsoft.mysoftware.service.projection.MgroupmenuListProj;
+import com.vsoft.mysoftware.service.projection.MgroupmenuProj;
 import com.vsoft.mysoftware.web.rest.error.BadRequestAlertException;
 import com.vsoft.mysoftware.web.rest.util.HeaderUtil;
 import com.vsoft.mysoftware.web.rest.util.PaginationUtil;
@@ -32,14 +35,17 @@ import com.vsoft.mysoftware.web.rest.util.PaginationUtil;
 public class MgroupmenuResource {
 
 	private static final String ENTITY_NAME = "mgroupmenus";
+	
 	private final MgroupmenuRepository mgroupmenuRepository;
 	
-	public MgroupmenuResource(MgroupmenuRepository mgroupmenuRepository) {
+	public MgroupmenuResource(
+			MgroupmenuRepository mgroupmenuRepository
+	) {
 		this.mgroupmenuRepository = mgroupmenuRepository;
 	}
 	
 	@PostMapping("/mgroupmenus")
-	public ResponseEntity<Mgroupmenu> createMgroupmenu(@Valid @RequestBody Mgroupmenu mgroupmenu)
+	public ResponseEntity<Mgroupmenu> create(@Valid @RequestBody Mgroupmenu mgroupmenu)
 		throws URISyntaxException{
 		
 		if(mgroupmenu.getId() != null){
@@ -53,11 +59,11 @@ public class MgroupmenuResource {
 	}
 	
 	@PutMapping("/mgroupmenus")
-	public ResponseEntity<Mgroupmenu> updateMgroupmenu(@Valid @RequestBody Mgroupmenu mgroupmenu)
+	public ResponseEntity<Mgroupmenu> update(@Valid @RequestBody Mgroupmenu mgroupmenu)
 		throws URISyntaxException{
 		
 		if(mgroupmenu.getId() == null){
-			return createMgroupmenu(mgroupmenu);
+			return create(mgroupmenu);
 		}
 		
 		Mgroupmenu result = mgroupmenuRepository.save(mgroupmenu);
@@ -67,7 +73,7 @@ public class MgroupmenuResource {
 	}
 	
 	@DeleteMapping("/mgroupmenus/{id}")
-	public ResponseEntity<Mgroupmenu> deleteMgroupmenu(@PathVariable String id){
+	public ResponseEntity<Mgroupmenu> deleteById(@PathVariable String id){
 		
 		mgroupmenuRepository.deleteById(id);
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id)).build();
@@ -75,21 +81,22 @@ public class MgroupmenuResource {
 	}
 	
 	@GetMapping("/mgroupmenus")
-	public ResponseEntity<List<Mgroupmenu>> getMgroupmenus(Pageable pageable) {
+	public ResponseEntity<List<MgroupmenuListProj>> findAll(Pageable pageable) {
 		
-		Page<Mgroupmenu> page = this.mgroupmenuRepository.findAll(pageable);
+		Page<MgroupmenuListProj> page = this.mgroupmenuRepository.findPagedProjectedBy(pageable, MgroupmenuListProj.class);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "api/mgroupmenus");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}
 	
 	@GetMapping("/mgroupmenus/all")
-	public ResponseEntity<List<Mgroupmenu>> getMgroupmenus() {
-		List<Mgroupmenu> result = this.mgroupmenuRepository.findAll();
+	public ResponseEntity<Collection<MgroupmenuProj>> findAll() {
+		Collection<MgroupmenuProj> result = this.mgroupmenuRepository.findAllProjectedBy(MgroupmenuProj.class);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}	
 	
+	
 	@GetMapping("/mgroupmenus/{id}")
-	public ResponseEntity<Mgroupmenu> getMgroupmenuById(@PathVariable String id){
+	public ResponseEntity<Mgroupmenu> findById(@PathVariable String id){
 		
 		Optional<Mgroupmenu> mgroupmenu = this.mgroupmenuRepository.findById(id);
 		return mgroupmenu.map(
@@ -98,18 +105,20 @@ public class MgroupmenuResource {
 	}
 	
 	@GetMapping("/mgroupmenus/kode/like/{kode}")
-	public ResponseEntity<List<Mgroupmenu>> getMgroupmenusLikeKode(Pageable pageable, @PathVariable String kode) {
+	public ResponseEntity<List<Mgroupmenu>> findLikeKode(Pageable pageable, @PathVariable String kode) {
 		
-		kode = kode + "%";
+		kode = kode +"%";
+		
 		Page<Mgroupmenu> page = this.mgroupmenuRepository.findByKodeLike(pageable, kode);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "api/mgroupmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}	
 	
 	@GetMapping("/mgroupmenus/uraian/like/{uraian}")
-	public ResponseEntity<List<Mgroupmenu>> getMgroupmenusLikeUraian(Pageable pageable, @PathVariable String uraian) {
+	public ResponseEntity<List<Mgroupmenu>> findLikeUraian(Pageable pageable, @PathVariable String uraian) {
 		
-		uraian = uraian + "%";
+		uraian = uraian +"%";
+		
 		Page<Mgroupmenu> page = this.mgroupmenuRepository.findByGroupmenuLike(pageable, uraian);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "api/mgroupmenus/uraian/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
