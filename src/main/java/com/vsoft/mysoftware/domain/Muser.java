@@ -40,6 +40,7 @@ public class Muser implements Serializable {
 	private String password;
 	
 	@Size(min = 1, max = 50)
+	@NotNull
 	@Column(name = "first_name", length = 50)
 	private String firstName;
 	
@@ -49,6 +50,7 @@ public class Muser implements Serializable {
 	
 	@Size(min = 5, max = 100)
 	@Email
+	@NotNull
 	@Column(name = "email", length = 100, nullable = false, unique = true )
 	private String email;
 	

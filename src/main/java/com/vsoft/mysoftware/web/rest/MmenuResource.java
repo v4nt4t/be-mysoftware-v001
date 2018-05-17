@@ -93,8 +93,8 @@ public class MmenuResource {
 	
 
 	@GetMapping("/mmenus/all")
-	public ResponseEntity<Collection<MmenuListProj>> findAll() {
-		Collection<MmenuListProj> result = this.mmenuRepository.findAllEager();
+	public ResponseEntity<Collection<MmenuProj>> findAll() {
+		Collection<MmenuProj> result = this.mmenuRepository.findAllProjectedBy(MmenuProj.class);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
@@ -107,17 +107,17 @@ public class MmenuResource {
 	}
 	
 	@GetMapping("/mmenus/kode/like/{kode}")
-	public ResponseEntity<List<Mmenu>> findLikeKode(Pageable pageable, @PathVariable String kode){
+	public ResponseEntity<List<MmenuListProj>> findLikeKode(Pageable pageable, @PathVariable String kode){
 		
-		Page<Mmenu> page = mmenuRepository.findByKodeLike(pageable, kode);
+		Page<MmenuListProj> page = mmenuRepository.findByKodeLike(pageable, kode, MmenuListProj.class);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}
 	
 	@GetMapping("/mmenus/uraian/like/{uraian}")
-	public ResponseEntity<List<Mmenu>> findLikeUraian(Pageable pageable, @PathVariable String uraian){
+	public ResponseEntity<List<MmenuListProj>> findLikeUraian(Pageable pageable, @PathVariable String uraian){
 		
-		Page<Mmenu> page = mmenuRepository.findByMenuLike(pageable, uraian);
+		Page<MmenuListProj> page = mmenuRepository.findByMenuLike(pageable, uraian, MmenuListProj.class);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}

@@ -105,21 +105,19 @@ public class MgroupmenuResource {
 	}
 	
 	@GetMapping("/mgroupmenus/kode/like/{kode}")
-	public ResponseEntity<List<Mgroupmenu>> findLikeKode(Pageable pageable, @PathVariable String kode) {
+	public ResponseEntity<List<MgroupmenuListProj>> findLikeKode(Pageable pageable, @PathVariable String kode) {
 		
 		kode = kode +"%";
-		
-		Page<Mgroupmenu> page = this.mgroupmenuRepository.findByKodeLike(pageable, kode);
+		Page<MgroupmenuListProj> page = this.mgroupmenuRepository.findByKodeLike(pageable, kode, MgroupmenuListProj.class);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "api/mgroupmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}	
 	
 	@GetMapping("/mgroupmenus/uraian/like/{uraian}")
-	public ResponseEntity<List<Mgroupmenu>> findLikeUraian(Pageable pageable, @PathVariable String uraian) {
+	public ResponseEntity<List<MgroupmenuListProj>> findLikeUraian(Pageable pageable, @PathVariable String uraian) {
 		
 		uraian = uraian +"%";
-		
-		Page<Mgroupmenu> page = this.mgroupmenuRepository.findByGroupmenuLike(pageable, uraian);
+		Page<MgroupmenuListProj> page = this.mgroupmenuRepository.findByGroupmenuLike(pageable, uraian, MgroupmenuListProj.class);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "api/mgroupmenus/uraian/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}	

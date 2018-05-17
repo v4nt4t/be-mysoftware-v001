@@ -18,11 +18,11 @@ public interface MgroupmenuRepository extends JpaRepository<Mgroupmenu, String> 
 	Page<Mgroupmenu> findByGroupmenuLike(Pageable pageable, String uraian);
 	
 //	Dynamic projections
-//	<T> Page<T> findByKodeLike(Pageable pageable, String kode, Class<T> type);
-//	<T> Page<T> findByGroupmenuLike(Pageable pageable, String uraian, Class<T> type);
-	
 	<T> Collection<T> findAllProjectedBy(Class<T> type);
 	<T> Page<T> findPagedProjectedBy(Pageable pageable, Class<T> type);
+	<T> Page<T> findByKodeLike(Pageable pageable, String kode, Class<T> type);
+	<T> Page<T> findByGroupmenuLike(Pageable pageable, String uraian, Class<T> type);
+
 	
 	
 }
