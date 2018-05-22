@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "muser")
-public class Muser implements Serializable {
+public class Muser extends AbstractAuditingEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -73,22 +73,8 @@ public class Muser implements Serializable {
 	@Column(name = "reset_key", length = 20)
 	private String resetKey;
 	
-	@Size(max = 50)
-	@Column(name = "created_by", length = 50)
-	private String createdBy;
-	
-	@Column(name = "created_date")
-	private Instant createdDate;
-	
 	@Column(name = "reset_date")
 	private Instant resetDate;
-
-	@Size(max = 50)
-	@Column(name = "last_modified_by", length = 50)
-	private String lastModifiedBy;
-	
-	@Column(name = "last_modified_date")
-	private Instant lastModifiedDate;
 	
 	@JsonIgnore
 	@ManyToMany
@@ -208,26 +194,6 @@ public class Muser implements Serializable {
 	}
 
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-
-	public Instant getCreatedDate() {
-		return createdDate;
-	}
-
-
-	public void setCreatedDate(Instant createdDate) {
-		this.createdDate = createdDate;
-	}
-
-
 	public Instant getResetDate() {
 		return resetDate;
 	}
@@ -235,26 +201,6 @@ public class Muser implements Serializable {
 
 	public void setResetDate(Instant resetDate) {
 		this.resetDate = resetDate;
-	}
-
-
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-
-
-	public Instant getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-
-	public void setLastModifiedDate(Instant lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
 	}
 
 	public Set<Mauthority> getMauthorities() {
@@ -265,7 +211,6 @@ public class Muser implements Serializable {
 	public void setMauthorities(Set<Mauthority> mauthorities) {
 		this.mauthorities = mauthorities;
 	}
-
 
 	@Override
 	public String toString() {
@@ -278,6 +223,5 @@ public class Muser implements Serializable {
 				", langKey=" + langKey + 
 				", activationKey=" + activationKey + "]";
 	}
-	
 	
 }

@@ -1,5 +1,7 @@
 package com.vsoft.mysoftware.service.dto;
 
+import com.vsoft.mysoftware.domain.Muser;
+
 public class MuserDTO {
 	
 	private String id;
@@ -7,7 +9,6 @@ public class MuserDTO {
 	private String email;
 	private String firstName;
 	private String lastName;
-	private String password;
 	private String imageUrl;
 	private boolean activated;
 	
@@ -15,7 +16,7 @@ public class MuserDTO {
 		
 	}
 	
-	public MuserDTO(String id, String login, String email, String firstName, String lastName, String password,
+	public MuserDTO(String id, String login, String email, String firstName, String lastName,
 			String imageUrl, boolean activated) {
 		super();
 		this.id = id;
@@ -23,12 +24,20 @@ public class MuserDTO {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.password = password;
 		this.imageUrl = imageUrl;
 		this.activated = activated;
 	}
 
-
+	public MuserDTO(Muser muser){
+		this.id = muser.getId();
+		this.login = muser.getLogin();
+		this.email = muser.getEmail();
+		this.firstName = muser.getFirstName();
+		this.lastName = muser.getLastName();
+		this.imageUrl = muser.getImageUrl();
+		this.activated = muser.getActivated();
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -69,14 +78,6 @@ public class MuserDTO {
 		this.lastName = lastName;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -96,12 +97,9 @@ public class MuserDTO {
 	@Override
 	public String toString() {
 		return "MuserDTO [id=" + id + ", login=" + login + ", email=" + email + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", password=" + password + ", imageUrl=" + imageUrl + ", activated="
-				+ activated + "]";
+				+ ", lastName=" + lastName + ", imageUrl=" + imageUrl + ", activated=" + activated + "]";
 	}
 
-
-	
 	
 
 }
