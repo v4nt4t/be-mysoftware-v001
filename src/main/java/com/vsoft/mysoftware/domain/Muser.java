@@ -65,10 +65,12 @@ public class Muser extends AbstractAuditingEntity implements Serializable {
 	@Column(name = "lang_key", length = 5)
 	private String langKey;
 	
+	@JsonIgnore
 	@Size(max = 20)
 	@Column(name = "activation_key", length = 20)
 	private String activationKey;
 	
+	@JsonIgnore
 	@Size(max = 20)
 	@Column(name = "reset_key", length = 20)
 	private String resetKey;
@@ -79,7 +81,7 @@ public class Muser extends AbstractAuditingEntity implements Serializable {
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "userauthority", 
-			joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+			joinColumns = {@JoinColumn(name = "muser_id", referencedColumnName = "id")},
 	        inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
 	@BatchSize(size = 20)
 	private Set<Mauthority> mauthorities = new HashSet<>();

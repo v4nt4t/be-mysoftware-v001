@@ -84,11 +84,11 @@ public class MuserResource {
    }
   
 	@GetMapping("/musers/i/{id}")
-	public ResponseEntity<MuserProj> findById(@PathVariable String id){
+	public ResponseEntity<MuserDTO> findById(@PathVariable String id){
 		
-		Optional<MuserProj> muserProj = muserRepository.findOneById(id, MuserProj.class);
+		Optional<MuserDTO> muser = muserRepository.findOneById(id, MuserDTO.class);
 			
-		return muserProj.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+		return muser.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
    
@@ -160,4 +160,10 @@ public class MuserResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, muserVM.getId())).build();
 
 	}
+	
+	@GetMapping("/musers/authorities")
+    public List<String> getAuthorities() {
+        return muserService.getAuthorities();
+    }
+	
 }

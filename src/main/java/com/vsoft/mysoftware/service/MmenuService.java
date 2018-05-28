@@ -1,12 +1,9 @@
 package com.vsoft.mysoftware.service;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
-import org.hibernate.Hibernate;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,73 +12,76 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vsoft.mysoftware.domain.Mmenu;
 import com.vsoft.mysoftware.repository.MmenuRepository;
 import com.vsoft.mysoftware.service.dto.MmenuDTO;
+import com.vsoft.mysoftware.service.projection.MmenuProj;
 
 @Service
 @Transactional
 public class MmenuService {
 
 	private final MmenuRepository mmenuRepository;
-	private final ModelMapper modelMapper;
 	
 	public MmenuService(
-			MmenuRepository mmenuRepository,
-			ModelMapper modelMapper
+			MmenuRepository mmenuRepository
 			){
 		this.mmenuRepository = mmenuRepository;
-		this.modelMapper = modelMapper;
 	}
 	
-	@Transactional
-	public MmenuDTO save(MmenuDTO mmenuDTO) {
-		Mmenu mmenu = this.modelMapper.map(mmenuDTO, Mmenu.class);
-		return this.modelMapper.map(mmenuRepository.save(mmenu), MmenuDTO.class);
-	} 
+	public Mmenu create(MmenuDTO mmenuDTO){
+		Mmenu mmenu = new Mmenu();
+		
+		mmenu.setKode(mmenuDTO.getKode());
+		mmenu.setMenu(mmenuDTO.getMenu());
+		mmenu.setObjek(mmenuDTO.getObjek());
+		mmenu.setAllowedf(mmenuDTO.isAllowedf());
+		mmenu.setUrutan(mmenuDTO.getUrutan());
+		mmenu.setMgroupmenu(mmenuDTO.getMgroupmenu());
+		return mmenuRepository.save(mmenu);
+	}
 	
-	@Transactional
+	public Mmenu update(MmenuDTO mmenuDTO){
+		
+		return mmenuRepository.findById(mmenuDTO.getId())
+		.map(mmenu ->{
+			mmenu.setKode(mmenuDTO.getKode());
+			mmenu.setMenu(mmenuDTO.getMenu());
+			mmenu.setObjek(mmenuDTO.getObjek());
+			mmenu.setAllowedf(mmenuDTO.isAllowedf());
+			mmenu.setUrutan(mmenuDTO.getUrutan());
+			mmenu.setMgroupmenu(mmenuDTO.getMgroupmenu());
+			return mmenu;
+		}).get();
+		
+	}
+	
+	
 	public void deleteById(String id){
 		mmenuRepository.deleteById(id);
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<MmenuDTO> findAll(Pageable pageable){
-		
-//		Page<Mmenu> result = 	mmenuRepository.findAll(pageable).map(MmenuDTO::new);
-//		for(Mmenu mmenu:result){
-//			Hibernate.initialize(mmenu.getMgroupmenu().getMheadermenu());
-//		}
-		
-//		return result.map(x->this.modelMapper.map(x, MmenuDTO.class));
-		return mmenuRepository.findAll(pageable).map(MmenuDTO::new);
-	}
-	
-	
-	@Transactional(readOnly = true)
-	public List<MmenuDTO> findAll(){
-		List<Mmenu> mmenus = mmenuRepository.findAll();
-		List<MmenuDTO> mmenuDTOs = new ArrayList<MmenuDTO>();
-		
-		for(Mmenu mmenu:mmenus){
-			MmenuDTO mmenuDTO = this.modelMapper.map(mmenu, MmenuDTO.class);
-			mmenuDTOs.add(mmenuDTO);
-		}
-		
-		return mmenuDTOs;
+	public Page<MmenuProj> findAll(Pageable pageable){
+		return mmenuRepository.findPagedProjectedBy(pageable, MmenuProj.class);
 	}
 	
 	@Transactional(readOnly = true)
-	public Optional<MmenuDTO> findById(String id) {
-		return mmenuRepository.findById(id).map(x->this.modelMapper.map(x, MmenuDTO.class));
+	public Collection<Mmenu> findAll(){
+		return mmenuRepository.findAll();
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<MmenuDTO> findLikeKode(Pageable pageable, String kode) {
+	public Optional<MmenuProj> findById(String id) {
+		return mmenuRepository.findOneById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<MmenuProj> findByKodeLike(Pageable pageable, String kode) {
 		kode = kode +"%";
-		return mmenuRepository.findByKodeLike(pageable, kode).map(x->this.modelMapper.map(x, MmenuDTO.class));
+		return mmenuRepository.findByKodeLike(pageable, kode, MmenuProj.class);
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<MmenuDTO> findLikeUraian(Pageable pageable, String uraian) {
+	public Page<MmenuProj> findByMenuLike(Pageable pageable, String uraian) {
 		uraian = uraian +"%";
-		return mmenuRepository.findByMenuLike(pageable, uraian).map(x->this.modelMapper.map(x, MmenuDTO.class));
+		return mmenuRepository.findByMenuLike(pageable, uraian, MmenuProj.class);
 	}
 }

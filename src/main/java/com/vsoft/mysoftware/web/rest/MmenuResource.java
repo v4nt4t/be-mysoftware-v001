@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vsoft.mysoftware.domain.Mmenu;
-import com.vsoft.mysoftware.repository.MmenuRepository;
-import com.vsoft.mysoftware.service.projection.MmenuListProj;
+import com.vsoft.mysoftware.service.MmenuService;
+import com.vsoft.mysoftware.service.dto.MmenuDTO;
 import com.vsoft.mysoftware.service.projection.MmenuProj;
 import com.vsoft.mysoftware.web.rest.error.BadRequestAlertException;
 import com.vsoft.mysoftware.web.rest.util.HeaderUtil;
@@ -37,37 +37,37 @@ import com.vsoft.mysoftware.web.rest.util.PaginationUtil;
 public class MmenuResource {
 
 	private static final String ENTITY_NAME = "mmenu";
-	private final MmenuRepository mmenuRepository;
+	private final MmenuService mmenuService;
 	
 	private MmenuResource(
-			MmenuRepository mmenuRepository
+			MmenuService mmenuService
 			) {
-		this.mmenuRepository = mmenuRepository;
+		this.mmenuService = mmenuService;
 	}
 	
 	@PostMapping("/mmenus")
-	public ResponseEntity<Mmenu> create(@Valid @RequestBody Mmenu mmenu) 
+	public ResponseEntity<Mmenu> create(@Valid @RequestBody MmenuDTO mmenuDTO) 
 			throws URISyntaxException{
 		
-		if(mmenu.getId() != null){
+		if(mmenuDTO.getId() != null){
 			throw new BadRequestAlertException("ID sudah ada, data mmenu tidak bisa di input", ENTITY_NAME, "idexists");
 		}
 		
-		Mmenu result = mmenuRepository.save(mmenu);
+		Mmenu result = mmenuService.create(mmenuDTO);
 		return ResponseEntity.created(new URI("/api/mmenus/" + result.getId()))
 				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
 				.body(result);
 	}
 	
 	@PutMapping("/mmenus")
-	public ResponseEntity<Mmenu> update(@Valid @RequestBody Mmenu mmenu) 
+	public ResponseEntity<Mmenu> update(@Valid @RequestBody MmenuDTO mmenuDTO) 
 			throws URISyntaxException{
 	
-		if(mmenu.getId() == null){
-			create(mmenu);
+		if(mmenuDTO.getId() == null){
+			create(mmenuDTO);
 		}
 		
-		Mmenu result = mmenuRepository.save(mmenu);
+		Mmenu result = mmenuService.update(mmenuDTO);
 		return ResponseEntity.ok()
 				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, result.getId().toString()))
 				.body(result);
@@ -76,48 +76,47 @@ public class MmenuResource {
 	@DeleteMapping("/mmenus/{id}")
 	public ResponseEntity<Mmenu> delete(@PathVariable String id){
 		
-		mmenuRepository.deleteById(id);
+		mmenuService.deleteById(id);
 		return ResponseEntity.ok()
 				.headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString()))
 				.build();
 	}
 	
 	@GetMapping("/mmenus")
-	public ResponseEntity<List<MmenuListProj>> findAll(Pageable pageable){
+	public ResponseEntity<List<MmenuProj>> findAll(Pageable pageable){
 		
-		Page<MmenuListProj> page = mmenuRepository.findPagedProjectedBy(pageable, MmenuListProj.class);
+		Page<MmenuProj> page = mmenuService.findAll(pageable);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mmenus");
 		
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}
 	
-
 	@GetMapping("/mmenus/all")
-	public ResponseEntity<Collection<MmenuProj>> findAll() {
-		Collection<MmenuProj> result = this.mmenuRepository.findAllProjectedBy(MmenuProj.class);
+	public ResponseEntity<Collection<Mmenu>> findAll() {
+		Collection<Mmenu> result = mmenuService.findAll();
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@GetMapping("/mmenus/{id}")
-	public ResponseEntity<Mmenu> findById(@PathVariable String id){
+	public ResponseEntity<MmenuProj> findById(@PathVariable String id){
 		
-		Optional<Mmenu> mmenu = mmenuRepository.findById(id);
+		Optional<MmenuProj> mmenu = mmenuService.findById(id);
 		return mmenu.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 	
 	@GetMapping("/mmenus/kode/like/{kode}")
-	public ResponseEntity<List<MmenuListProj>> findLikeKode(Pageable pageable, @PathVariable String kode){
+	public ResponseEntity<List<MmenuProj>> findLikeKode(Pageable pageable, @PathVariable String kode){
 		
-		Page<MmenuListProj> page = mmenuRepository.findByKodeLike(pageable, kode, MmenuListProj.class);
+		Page<MmenuProj> page = mmenuService.findByKodeLike(pageable, kode);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}
 	
 	@GetMapping("/mmenus/uraian/like/{uraian}")
-	public ResponseEntity<List<MmenuListProj>> findLikeUraian(Pageable pageable, @PathVariable String uraian){
+	public ResponseEntity<List<MmenuProj>> findLikeUraian(Pageable pageable, @PathVariable String uraian){
 		
-		Page<MmenuListProj> page = mmenuRepository.findByMenuLike(pageable, uraian, MmenuListProj.class);
+		Page<MmenuProj> page = mmenuService.findByMenuLike(pageable, uraian);
 		HttpHeaders httpHeaders = PaginationUtil.generatePaginationHttpHeaders(page, "/api/mmenus/kode/like");
 		return new ResponseEntity<>(page.getContent(), httpHeaders, HttpStatus.OK);
 	}

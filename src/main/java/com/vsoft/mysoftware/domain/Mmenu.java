@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -56,7 +56,8 @@ public class Mmenu implements Serializable {
 	@Column(name = "urutan", nullable = false)
 	private Integer urutan;
 
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@JsonIgnore
 	@ManyToOne(fetch=FetchType.LAZY)
 	@NotNull
 	private Mgroupmenu mgroupmenu;

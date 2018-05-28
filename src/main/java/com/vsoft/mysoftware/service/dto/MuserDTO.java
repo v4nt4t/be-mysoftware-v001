@@ -1,16 +1,42 @@
 package com.vsoft.mysoftware.service.dto;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+
+import com.vsoft.mysoftware.config.Constants;
+import com.vsoft.mysoftware.domain.Mauthority;
 import com.vsoft.mysoftware.domain.Muser;
 
 public class MuserDTO {
 	
 	private String id;
+	
+	@NotBlank
+    @Pattern(regexp = Constants.LOGIN_REGEX)
+	@Size(min = 1, max = 50)
 	private String login;
+	
+    @Email
+    @Size(min = 5, max = 100)
 	private String email;
+	
+	@Size(max = 50)
 	private String firstName;
+	
+	@Size(max = 50)
 	private String lastName;
+	
+	@Size(max = 256)
 	private String imageUrl;
 	private boolean activated;
+	
+	private Set<String> mauthorities;
 	
 	public MuserDTO(){
 		
@@ -36,6 +62,9 @@ public class MuserDTO {
 		this.lastName = muser.getLastName();
 		this.imageUrl = muser.getImageUrl();
 		this.activated = muser.getActivated();
+		this.mauthorities = muser.getMauthorities().stream()
+				.map(Mauthority::getName)
+				.collect(Collectors.toSet());
 	}
 	
 	public String getId() {
@@ -94,11 +123,23 @@ public class MuserDTO {
 		this.activated = activated;
 	}
 
+	public Set<String> getMauthorities() {
+		return mauthorities;
+	}
+
+	public void setMauthorities(Set<String> mauthorities) {
+		this.mauthorities = mauthorities;
+	}
+
 	@Override
 	public String toString() {
 		return "MuserDTO [id=" + id + ", login=" + login + ", email=" + email + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", imageUrl=" + imageUrl + ", activated=" + activated + "]";
+				+ ", lastName=" + lastName + ", imageUrl=" + imageUrl + ", activated=" + activated + ", mauthorities="
+				+ mauthorities + "]";
 	}
+
+
+	
 
 	
 

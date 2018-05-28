@@ -1,6 +1,5 @@
 package com.vsoft.mysoftware.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vsoft.mysoftware.domain.Mgroupmenu;
 import com.vsoft.mysoftware.domain.Mmenu;
 
@@ -14,7 +13,6 @@ public class MmenuDTO {
 	private boolean allowedf;
 	private Integer urutan;
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private Mgroupmenu mgroupmenu;
 	
 	public MmenuDTO(){

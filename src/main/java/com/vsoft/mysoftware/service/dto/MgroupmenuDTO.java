@@ -1,5 +1,8 @@
 package com.vsoft.mysoftware.service.dto;
 
+import com.vsoft.mysoftware.domain.Mgroupmenu;
+import com.vsoft.mysoftware.domain.Mheadermenu;
+
 public class MgroupmenuDTO{
 	
 	private String id;
@@ -7,9 +10,20 @@ public class MgroupmenuDTO{
 	private String groupmenu;
 	private boolean allowedf;
 	private int urutan;
+
+	private Mheadermenu mheadermenu;
 	
 	public MgroupmenuDTO(){
 		
+	}
+
+	public MgroupmenuDTO(Mgroupmenu mgroupmenu) {
+		this.id = mgroupmenu.getId();
+		this.kode = mgroupmenu.getKode();
+		this.groupmenu = mgroupmenu.getGroupmenu();
+		this.allowedf = mgroupmenu.isAllowedf();
+		this.urutan = mgroupmenu.getUrutan();
+		this.mheadermenu = mgroupmenu.getMheadermenu();
 	}
 
 	public String getId() {
@@ -52,10 +66,18 @@ public class MgroupmenuDTO{
 		this.urutan = urutan;
 	}
 
+	public Mheadermenu getMheadermenu() {
+		return mheadermenu;
+	}
+
+	public void setMheadermenu(Mheadermenu mheadermenu) {
+		this.mheadermenu = mheadermenu;
+	}
+
 	@Override
 	public String toString() {
 		return "MgroupmenuDTO [id=" + id + ", kode=" + kode + ", groupmenu=" + groupmenu + ", allowedf=" + allowedf
-				+ ", urutan=" + urutan + "]";
+				+ ", urutan=" + urutan + ", mheadermenu=" + mheadermenu + "]";
 	}
 
 

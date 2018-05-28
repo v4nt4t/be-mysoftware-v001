@@ -2,6 +2,11 @@ package com.vsoft.mysoftware.service;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vsoft.mysoftware.domain.Mauthority;
 import com.vsoft.mysoftware.domain.Muser;
+import com.vsoft.mysoftware.repository.MauthoritiesRepository;
 import com.vsoft.mysoftware.repository.MuserRepository;
+import com.vsoft.mysoftware.security.AuthoritiesConstants;
+import com.vsoft.mysoftware.security.SecurityUtils;
 import com.vsoft.mysoftware.service.dto.MuserDTO;
 import com.vsoft.mysoftware.service.util.RandomUtil;
 import com.vsoft.mysoftware.service.util.StorageUtil;
+import com.vsoft.mysoftware.web.rest.error.BadRequestAlertException;
+import com.vsoft.mysoftware.web.rest.error.EmailAlreadyUsedException;
+import com.vsoft.mysoftware.web.rest.error.LoginAlreadyUsedException;
 
 /**
  * Service class for managing users.
@@ -32,15 +44,19 @@ public class MuserService {
 	
 	private final MuserRepository muserRepository;
 	
+	private final MauthoritiesRepository mauthoritiesRepository;
+	
 	private final StorageUtil storageUtil;
 	
 	public MuserService(
 			MuserRepository muserRepository, 
 			PasswordEncoder passwordEncoder,
-			StorageUtil storageUtil){
+			StorageUtil storageUtil,
+			MauthoritiesRepository mauthoritiesRepository){
 		this.muserRepository = muserRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.storageUtil= storageUtil;
+		this.mauthoritiesRepository = mauthoritiesRepository;
 	}
 
 	public MuserDTO createUser(MuserDTO muserDTO){
@@ -57,6 +73,22 @@ public class MuserService {
 		muser.setActivated(muserDTO.isActivated());
 		muser.setResetKey(RandomUtil.generateResetKey());
 		muser.setResetDate(Instant.now());
+		
+		//set Authorities jika ada
+		if (muserDTO.getMauthorities() != null){
+			Set<Mauthority> mauthorities = muserDTO.getMauthorities().stream()
+					.map(mauthoritiesRepository::getOne)
+					.collect(Collectors.toSet());
+	
+			muser.setMauthorities(mauthorities);
+		//set Authorities jika tidak dipilih ada
+		}else{
+			Mauthority mauthority = mauthoritiesRepository.getOne(AuthoritiesConstants.USER);
+			Set<Mauthority> mauthorities = new HashSet<>();
+			mauthorities.add(mauthority);
+			muser.setMauthorities(mauthorities);
+		}
+		
 		muserRepository.save(muser);
 		log.debug("Created Information for User: {}", muser);
 		
@@ -72,7 +104,9 @@ public class MuserService {
 					user.setFirstName(muserDTO.getFirstName());
 					user.setLastName(muserDTO.getLastName());
 					user.setActivated(muserDTO.isActivated());
-					
+					user.setMauthorities(muserDTO.getMauthorities().stream()
+							.map(mauthoritiesRepository::getOne)
+							.collect(Collectors.toSet()));
 					log.debug("Update Information for User: {}", user);
 					return user;
 				}).map(MuserDTO::new).get();	
@@ -85,11 +119,19 @@ public class MuserService {
 		
 		//convert json string to object
 		MuserDTO muserDTO = objectMapper.readValue(data, MuserDTO.class);
-	
+
+		System.out.println(data);
+		
 		MuserDTO muser = new MuserDTO();
+
 		//jika sudah ada id update jika belum buat baru
 		if(muserDTO.getId()!=null){
 			muser = updateUser(muserDTO);
+		// Lowercase the user login before comparing with database
+		}else if(muserRepository.findOneByLogin(muserDTO.getLogin().toLowerCase()).isPresent()){
+			throw new LoginAlreadyUsedException();
+		}else if(muserRepository.findOneByEmailIgnoreCase(muserDTO.getEmail()).isPresent()){
+			throw new EmailAlreadyUsedException();
 		}else{
 			muser = createUser(muserDTO);
 		}
@@ -138,4 +180,14 @@ public class MuserService {
 		});
 		
 	}
+	
+    @Transactional(readOnly = true)
+    public Optional<Muser> getUserWithAuthorities() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(muserRepository::findOneWithMauthoritiesByLogin);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<String> getAuthorities(){
+    	return mauthoritiesRepository.findAll().stream().map(Mauthority::getName).collect(Collectors.toList());
+    }
 }
